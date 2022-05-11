@@ -1,4 +1,5 @@
 import createError from 'http-errors'
+import { queryByField } from '../helpers/influx-queries.js'
 import { Sensor } from '../models/sensor-model.js'
 import { Thing } from '../models/thing-model.js'
 
@@ -53,5 +54,40 @@ export default class ThingsController {
     }
     await Thing.deleteOne({ name: thingName, _id: foundThing._id })
     res.sendStatus(204)
+  }
+
+  async getSensors(req, res, next) {
+    const { thingName } = req.params
+    const foundThing = await Thing.findOne({ name: thingName })
+    if (!foundThing) {
+      return next(createError(404, 'Thing not found'))
+    }
+    const json = await foundThing.sensors.map(sensor => {
+      return {
+        name: sensor.name,
+        description: sensor.description,
+        influxField: sensor.influxField
+      }
+    })
+    res.send(json)
+  }
+
+  async getSensor(req, res, next) {
+    const { thingName, sensorName } = req.params
+    const foundThing = await Thing.findOne({ name: thingName })
+    if (!foundThing) {
+      return next(createError(404, 'Thing not found'))
+    }
+    const foundSensor = await Sensor.findOne({ name: sensorName, thing_id: foundThing._id })
+    if (!foundSensor) {
+      return next(createError(404, 'Sensor not found'))
+    }
+    const result = await queryByField(foundSensor.influxField)
+    res.send({
+      name: foundSensor.name,
+      description: foundSensor.description,
+      influxField: foundSensor.influxField,
+      timeline: result
+    })
   }
 }
