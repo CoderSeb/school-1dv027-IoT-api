@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 
-export const SensorSchema = new mongoose.Schema({
+const SensorSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -26,10 +26,14 @@ export const SensorSchema = new mongoose.Schema({
   }
 }, {
   versionKey: false
-})
+}
+)
 
 SensorSchema.pre('save', function() {
   this.uniqueId = `${this.thing_id}-${this.name}`
 })
 
-export const Sensor = mongoose.model('Sensor', SensorSchema)
+const Sensor = mongoose.model('Sensor', SensorSchema)
+
+export { Sensor, SensorSchema }
+
