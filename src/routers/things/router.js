@@ -13,6 +13,10 @@ router.route('/:thingName')
   .get(controller.getThing)
   .delete(controller.deleteThing)
 
+router.route('/:thingName/sensors')
+  .get(controller.getSensors)
 
+router.route('/:thingName/sensors/:sensorName')
+  .get(controller.getSensor)
 
 export default router
