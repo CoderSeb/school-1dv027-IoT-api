@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { SensorSchema } from './sensor-model.js'
+import { Sensor, SensorSchema } from './sensor-model.js'
 
 
 const ThingsSchema = new mongoose.Schema({
@@ -22,6 +22,13 @@ const ThingsSchema = new mongoose.Schema({
   sensors: {
     type: [SensorSchema]
   }
+}, {
+  versionKey: false
+})
+
+ThingsSchema.pre('deleteOne', function(next) {
+  let id = this.getQuery()["_id"]
+  Sensor.deleteMany({ thing_id: id }, next)
 })
 
 export const Thing = mongoose.model('Thing', ThingsSchema)

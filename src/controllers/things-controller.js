@@ -3,8 +3,19 @@ import { Sensor } from '../models/sensor-model.js'
 import { Thing } from '../models/thing-model.js'
 
 export default class ThingsController {
-  async sayHello(req, res, next) {
-    res.send('Hello World! from things controller')
+  async getThing(req, res, next) {
+    const { thingName } = req.params
+    const foundThing = await Thing.findOne({ name: thingName })
+    if (!foundThing) {
+      return next(createError(404, 'Thing not found'))
+    }
+    res.send(foundThing)
+  }
+  
+  
+  async getAll(req, res, next) {
+    const foundThings = await Thing.find()
+    res.send(foundThings)
   }
 
   async addThing(req, res, next) {
@@ -32,5 +43,15 @@ export default class ThingsController {
       }
       next(err)
     }
+  }
+
+  async deleteThing(req, res, next) {
+    const { thingName } = req.params
+    const foundThing = await Thing.findOne({ name: thingName })
+    if (!foundThing) {
+      return next(createError(404, 'Thing not found'))
+    }
+    await Thing.deleteOne({ name: thingName, _id: foundThing._id })
+    res.sendStatus(204)
   }
 }

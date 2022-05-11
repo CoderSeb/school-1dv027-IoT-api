@@ -24,6 +24,8 @@ export const SensorSchema = new mongoose.Schema({
     type: String,
     unique: true
   }
+}, {
+  versionKey: false
 })
 
 SensorSchema.pre('save', function() {

@@ -5,8 +5,13 @@ import ThingsController from '../../controllers/things-controller.js'
 const router = express.Router()
 const controller = new ThingsController()
 
-router.get('/', controller.sayHello)
-router.post('/', controller.addThing)
+router.route('/')
+  .get(controller.getAll)
+  .post(controller.addThing)
+
+router.route('/:thingName')
+  .get(controller.getThing)
+  .delete(controller.deleteThing)
 
 
 
