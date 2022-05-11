@@ -9,6 +9,11 @@ const main = async () => {
   server.use(logger('dev'))
   server.use('/', router)
 
+  // Errors
+  server.use((err, req, res, next) => {
+    res.status(err.status || 500).send(err.message)
+  })
+
   server.listen(port, (req, res) => {
     console.log(`Server is running @ http://localhost:${port}`)
   })
