@@ -12,7 +12,7 @@ const main = async () => {
   const port = process.env.PORT || 5000
 
   await dbConnection()
-
+  server.use(express.json())
   server.use(logger('dev'))
   server.use('/', router)
 

@@ -6,6 +6,7 @@ const router = express.Router()
 const controller = new ThingsController()
 
 router.get('/', controller.sayHello)
+router.post('/', controller.addThing)
 
 
 
