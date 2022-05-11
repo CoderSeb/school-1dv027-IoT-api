@@ -73,7 +73,12 @@ export default class ThingsController {
   }
 
   async getSensor(req, res, next) {
-    const { thingName, sensorName } = req.params
+    try {
+      let since
+      const { thingName, sensorName } = req.params
+      if (req.query.since) {
+        since = req.query.since
+      }
     const foundThing = await Thing.findOne({ name: thingName })
     if (!foundThing) {
       return next(createError(404, 'Thing not found'))
@@ -82,12 +87,15 @@ export default class ThingsController {
     if (!foundSensor) {
       return next(createError(404, 'Sensor not found'))
     }
-    const result = await queryByField(foundSensor.influxField)
+    const result = await queryByField(foundSensor.influxField, since)
     res.send({
       name: foundSensor.name,
       description: foundSensor.description,
       influxField: foundSensor.influxField,
       timeline: result
     })
+    } catch (err) {
+      next(err)
+    }
   }
 }
