@@ -1,3 +1,4 @@
+import createError from 'http-errors'
 import { Sensor } from '../models/sensor-model.js'
 import { Thing } from '../models/thing-model.js'
 
@@ -17,13 +18,18 @@ export default class ThingsController {
       await newThing.save()
       for (let i = 0; i < sensors.length; i++) {
         const sensor = sensors[i]
+        sensor.thing_id = newThing._id
         const newSensor = new Sensor(sensor)
         await newSensor.save()
         newThing.sensors.push(newSensor)
         await newThing.save()
       }
-      res.send(newThing)
+      await newThing.save()
+      res.status(201).send(newThing)
     } catch (err) {
+      if (err.code=== 11000) {
+        return next(createError(409, 'Thing already exists'))
+      }
       next(err)
     }
   }

@@ -5,7 +5,6 @@ export const SensorSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
     maxLength: [100, 'Too long of a name...']
   },
   description: {
@@ -16,7 +15,19 @@ export const SensorSchema = new mongoose.Schema({
   influxField: {
     type: String,
     required: true
+  },
+  thing_id: {
+    type: String,
+    required: true
+  },
+  uniqueId: {
+    type: String,
+    unique: true
   }
+})
+
+SensorSchema.pre('save', function() {
+  this.uniqueId = `${this.thing_id}-${this.name}`
 })
 
 export const Sensor = mongoose.model('Sensor', SensorSchema)
