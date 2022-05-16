@@ -26,8 +26,8 @@ const main = async () => {
   server.set('trust proxy', 1)
 
   const limiter = rateLimit({
-    windowMs: 2 * 60 * 1000, // 2 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 1 * 60 * 1000, // 2 minutes
+    max: 150, // limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
     standardHeaders: true,
     legacyHeaders: false
