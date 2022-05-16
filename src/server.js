@@ -5,6 +5,7 @@ import logger from 'morgan'
 import { dbConnection } from './config/mongodb.js'
 import router from './routers/router.js'
 
+
 dotenv.config()
 
 const main = async () => {
@@ -14,12 +15,19 @@ const main = async () => {
   await dbConnection()
   server.use(express.json())
   server.use(logger('dev'))
+  
+  server.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    next()
+  })
 
-  // For proxy in production, might not be needed... server.set('trust proxy', 1)
+
+  server.set('trust proxy', 1)
 
   const limiter = rateLimit({
-    windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 50, // limit each IP to 50 requests per windowMs
+    windowMs: 2 * 60 * 1000, // 2 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
     standardHeaders: true,
     legacyHeaders: false

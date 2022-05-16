@@ -10,12 +10,13 @@ export const queryByField = async (field, since, interval) => {
   let queryClient = client.getQueryApi(org)
   const startDate = since || '1d'
   const every = interval || '1h'
-  let fluxQuery = `from(bucket: "terra_temps")
+  let fluxQuery = `
+  from(bucket: "terra_temps")
 	|> range(start: -${startDate})
   |> aggregateWindow(every: ${every}, fn: mean)
   |> filter(fn: (r) => r["_measurement"] == "mem")
   |> filter(fn: (r) => r["_field"] == "${field}")
-  |> limit(n: 100)`
+  |> limit(n: 150)`
 
   let result = []
   const final = await queryClient
@@ -35,6 +36,7 @@ export const queryByField = async (field, since, interval) => {
       return result
     })
     .catch((err) => {
+      console.log(err.message)
       throw createError(500, 'InfluxDB query failed')
     })
   return final
