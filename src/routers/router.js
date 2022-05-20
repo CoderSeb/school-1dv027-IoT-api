@@ -5,7 +5,9 @@ import thingsRouter from './things/router.js'
 const router = express.Router()
 
 router.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send({
+    message: 'Welcome to the terra temp api!'
+  })
 })
 
 router.use('/things', thingsRouter)
